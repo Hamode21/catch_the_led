@@ -1,0 +1,30 @@
+const int ledPin = 6;        
+const int potPin = A0;         
+const int potMinValue = 0;    
+const int potMaxValue = 1023;  
+
+void setup() {
+  pinMode(ledPin, OUTPUT);     
+  Serial.begin(9600);          
+}
+
+void loop() {
+  int potValue = analogRead(potPin);   
+
+  Serial.print("Potentiometer Value: "); 
+  Serial.println(potValue); // Print potentiometer value for debugging
+
+  if (potValue == potMinValue) {       // Check if potentiometer is at minimum value
+    for (int i = 0; i < 7; i++) {      // Blink the LED 7 times
+      digitalWrite(ledPin, HIGH);     
+      delay(500);                     
+      digitalWrite(ledPin, LOW);       // Turn the LED off
+      delay(500);                      
+    }
+    while (analogRead(potPin) == potMinValue) {
+      
+      // This prevents the loop from restarting and blinking again
+    }
+  }
+
+  
