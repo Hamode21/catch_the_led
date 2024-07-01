@@ -26,5 +26,17 @@ void loop() {
       // This prevents the loop from restarting and blinking again
     }
   }
+ if (potValue == potMaxValue) {       
+    for (int i = 0; i < 12; i++) {     // Blink the LED 12 times
+      digitalWrite(ledPin, HIGH);     
+      delay(500);                      
+      digitalWrite(ledPin, LOW);       
+      delay(500);                      
+    }
+    while (analogRead(potPin) == potMaxValue) {
+     
+    }
+  }
+}
 
   
