@@ -1,42 +1,55 @@
-const int ledPin = 6;        
-const int potPin = A0;         
-const int potMinValue = 0;    
-const int potMaxValue = 1023;  
+const int ledPin = 6;   // LED connected to digital pin 6
+const int potPin = A0;  // Potentiometer connected to analog pin A0
+
+bool hasBlinkingStarted = false;  // Track if the 7-blink sequence has started
+bool hasBlinkedEightTimes = false;  // Track if the 8-blink sequence has started
 
 void setup() {
-  pinMode(ledPin, OUTPUT);     
-  Serial.begin(9600);          
+  pinMode(ledPin, OUTPUT);  // Set LED pin as an output
+  Serial.begin(9600);      // Start serial communication for debugging
 }
 
 void loop() {
-  int potValue = analogRead(potPin);   
+  int potValue = analogRead(potPin);  // Read the potentiometer value
+  int minThreshold = 10;  // Minimum potentiometer value threshold for initial check
+  int maxPotValue = 1023;  // Maximum value of the potentiometer
+  int minPlus20Percent = minThreshold + 0.2 * (maxPotValue - minThreshold);  // Calculate min + 20%
 
-  Serial.print("Potentiometer Value: "); 
-  Serial.println(potValue); // Print potentiometer value for debugging
+  // Check if the potentiometer is at its minimum position
+  if (potValue < minThreshold && !hasBlinkingStarted && !hasBlinkedEightTimes) {
+    hasBlinkingStarted = true;  // Indicate that the 7-blink sequence should start
 
-  if (potValue == potMinValue) {       // Check if potentiometer is at minimum value
-    for (int i = 0; i < 7; i++) {      // Blink the LED 7 times
-      digitalWrite(ledPin, HIGH);     
-      delay(500);                     
-      digitalWrite(ledPin, LOW);       // Turn the LED off
-      delay(500);                      
+    // Blink the LED 7 times
+    for (int i = 0; i < 7; i++) {
+      digitalWrite(ledPin, HIGH);  // Turn the LED on
+      delay(250);  // Wait for 250 milliseconds
+      digitalWrite(ledPin, LOW);   // Turn the LED off
+      delay(250);  // Wait for 250 milliseconds
     }
-    while (analogRead(potPin) == potMinValue) {
-      
-      // This prevents the loop from restarting and blinking again
-    }
+
+    // After blinking 7 times, wait for 1 second before checking again
+    delay(1000);
   }
- if (potValue == potMaxValue) {       
-    for (int i = 0; i < 12; i++) {     // Blink the LED 12 times
-      digitalWrite(ledPin, HIGH);     
-      delay(500);                      
-      digitalWrite(ledPin, LOW);       
-      delay(500);                      
+
+  // Check if the potentiometer is moved to min + 20% and the 8-blink sequence hasn't started yet
+  if (potValue > minPlus20Percent && !hasBlinkedEightTimes) {
+    hasBlinkedEightTimes = true;  // Indicate that the 8-blink sequence should start
+
+    // Blink the LED 8 times
+    for (int i = 0; i < 8; i++) {
+      digitalWrite(ledPin, HIGH);  // Turn the LED on
+      delay(250);  // Wait for 250 milliseconds
+      digitalWrite(ledPin, LOW);   // Turn the LED off
+      delay(250);  // Wait for 250 milliseconds
     }
-    while (analogRead(potPin) == potMaxValue) {
-     
-    }
+
+    // After blinking 8 times, wait for 1 second before checking again
+    delay(1000);
+  }
+
+  // Reset conditions if the potentiometer value goes below the min + 20% threshold
+  if (potValue < minPlus20Percent) {
+    hasBlinkingStarted = false;  // Reset for the next check
+    hasBlinkedEightTimes = false;  // Reset for the next check
   }
 }
-
-  
