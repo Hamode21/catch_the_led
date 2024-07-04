@@ -1,9 +1,8 @@
-// led blink 7 times on min , 12 times on max for now
 const int ledPin = 6;   
 const int potPin = A0; 
 
 int numBlinks = 0;  
-bool blinked = false;  // Track if the LED has already blinked
+bool blinked = false;  
 
 void setup() {
   pinMode(ledPin, OUTPUT);  
@@ -12,38 +11,36 @@ void setup() {
 
 void loop() {
   int potValue = analogRead(potPin);  
-  int maxPotValue = 1023;  
-  
- 
-  float percentage = (float)potValue / maxPotValue;
+  int mappedValue = map(potValue, 0, 1023, 0, 100);
 
-  
-  if (percentage <= 0.1) {
+  if (mappedValue <= 10) {
     numBlinks = 7;  
-  } else if (percentage >= 0.9) {
+  } else if (mappedValue >= 90) {
     numBlinks = 12; 
+  } else if (mappedValue >= 80) {
+    numBlinks = 11; 
+  } else if (mappedValue >= 60) {
+    numBlinks = 10; 
+  } else if (mappedValue >= 40) {
+    numBlinks = 9; 
+  } else if (mappedValue >= 20) {
+    numBlinks = 8; 
   } else {
     numBlinks = 0;  
   }
 
-  
   if (numBlinks > 0 && !blinked) {
-    blinked = true;  // Mark that the LED has blinked
+    blinked = true;  
     
-   
     for (int i = 0; i < numBlinks; i++) {
       digitalWrite(ledPin, HIGH);  
       delay(250);  
       digitalWrite(ledPin, LOW);  
       delay(250);  
     }
-  }
-  
- 
-  if (numBlinks == 0) {
+  } else if (numBlinks == 0 && blinked) {
     blinked = false; 
   }
-  
- 
-  delay(10);
+
+  delay(3000);
 }
